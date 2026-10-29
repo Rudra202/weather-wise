@@ -6,13 +6,11 @@ The project is a TypeScript npm workspace with a React/Vite client and an Expres
 
 ## Demo
 
-A screen recording of the running app is available locally at `preview/preview.mp4`. GitHub does not render local video files directly in a README, so to display it on the repo page upload the video to a **GitHub Release** (or YouTube/Loom) and replace the link below:
+A screen recording of the running app:
 
-[▶ Watch the demo video](https://github.com/Rudra202/weather-wise/releases)
+[▶ Watch the demo video on Google Drive](https://drive.google.com/file/d/1PfwENrcrpdwFlEITyvdW4Wt6I2ywHeyu/view?usp=sharing)
 
-<!-- Once hosted, you can embed it with:
-<video src="YOUR_VIDEO_URL" controls width="100%"></video>
--->
+<iframe src="https://drive.google.com/file/d/1PfwENrcrpdwFlEITyvdW4Wt6I2ywHeyu/preview" width="100%" height="480" allow="autoplay" allowfullscreen></iframe>
 
 ## What it does
 
