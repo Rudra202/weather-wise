@@ -8,9 +8,9 @@ The project is a TypeScript npm workspace with a React/Vite client and an Expres
 
 A screen recording of the running app:
 
-[▶ Watch the demo video on Google Drive](https://drive.google.com/file/d/1PfwENrcrpdwFlEITyvdW4Wt6I2ywHeyu/view?usp=sharing)
+[▶ Watch the demo video](https://github.com/Rudra202/weather-wise/raw/main/preview/preview-1.mp4)
 
-<iframe src="https://drive.google.com/file/d/1PfwENrcrpdwFlEITyvdW4Wt6I2ywHeyu/preview" width="100%" height="480" allow="autoplay" allowfullscreen></iframe>
+<video src="https://github.com/Rudra202/weather-wise/raw/main/preview/preview-1.mp4" controls width="100%"></video>
 
 ## What it does
 

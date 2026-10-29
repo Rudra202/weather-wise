@@ -4,7 +4,8 @@ dist-ssr/
 build/
 coverage/
 .tmp/
-preview/
+preview/*
+!preview/preview-1.mp4
 *.local
 .env
 .env.*
