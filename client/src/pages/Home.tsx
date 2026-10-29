@@ -27,6 +27,28 @@ export default function Home() {
   const [unit, setUnit] = useState<TemperatureUnit>(() => loadTemperatureUnit());
   const { data, loading, error, retry } = useWeather(location);
 
+  // Keep the displayed location name in sync with the resolved place returned by
+  // the API (for example after a "use my location" lookup).
+  useEffect(() => {
+    if (!data?.location) return;
+    setLocation((previous) => {
+      if (
+        previous.name === data.location.name &&
+        previous.country === data.location.country
+      ) {
+        return previous;
+      }
+      return {
+        ...previous,
+        name: data.location.name,
+        country: data.location.country,
+        admin1: data.location.admin1,
+        countryCode: data.location.countryCode,
+        timezone: data.location.timezone,
+      };
+    });
+  }, [data]);
+
   useEffect(() => {
     saveTemperatureUnit(unit);
   }, [unit]);
