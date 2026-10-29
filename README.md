@@ -2,9 +2,17 @@
 
 WeatherWise is a full-stack, worldwide weather dashboard. It uses live [Open-Meteo](https://open-meteo.com/) forecast data and combines Open-Meteo, [Photon](https://photon.komoot.io/) (OpenStreetMap), and [Esri/ArcGIS](https://developers.arcgis.com/rest/geocode/) for place search, then adds optional MongoDB-backed accounts so users can save favorite locations.
 
-The project is a TypeScript npm workspace with a React/Vite client and an Express API. Weather search is public. Accounts support email/password, Google, GitHub, and emailed one-time codes, all backed by the same HttpOnly JWT session cookie.
+The project is a TypeScript npm workspace with a React/Vite client and an Express API. Weather search is public. Accounts support email/password, Google, GitHub, and password reset by email, all backed by the same HttpOnly JWT session cookie.
 
-Interview notes based on this implementation are in [INTERVIEW.md](./INTERVIEW.md).
+## Demo
+
+A screen recording of the running app is available locally at `preview/preview.mp4`. GitHub does not render local video files directly in a README, so to display it on the repo page upload the video to a **GitHub Release** (or YouTube/Loom) and replace the link below:
+
+[▶ Watch the demo video](https://github.com/Rudra202/weather-wise/releases)
+
+<!-- Once hosted, you can embed it with:
+<video src="YOUR_VIDEO_URL" controls width="100%"></video>
+-->
 
 ## What it does
 
@@ -439,13 +447,13 @@ This is a solid baseline, not a complete production identity system. See the lim
 The repository is secure by default for local development, but deployment needs operator configuration:
 
 1. **Database user and network access.** In MongoDB Atlas, create a dedicated application user with `readWrite` on the `weatherwise` database only — not an organization owner or admin user. Restrict the IP allowlist to the API host's egress addresses, or use private endpoint/VPC peering. Do not leave `0.0.0.0/0` once the host is known.
-2. **Secrets.** Store `MONGODB_URI`, a random 32+ character `JWT_SECRET`, `OTP_SECRET`, OAuth client secrets, and the Brevo SMTP key in the hosting provider's secret manager, never in the repository. Rotate the Atlas password if it has ever appeared in chat, logs, or a screenshot, then restart the API.
+2. **Secrets.** Store `MONGODB_URI`, a random 32+ character `JWT_SECRET`, `RESET_SECRET`, OAuth client secrets, and the Brevo SMTP key in the hosting provider's secret manager, never in the repository. Rotate the Atlas password if it has ever appeared in chat, logs, or a screenshot, then restart the API.
 3. **Environment.** Set `NODE_ENV=production`, `CLIENT_URL=https://your-client-domain`, `API_PUBLIC_URL=https://api.your-domain`, and `MONGODB_URI`. The API refuses to start if required values are missing, if `CLIENT_URL` is not HTTPS, or if OAuth is enabled without an HTTPS `API_PUBLIC_URL`.
 4. **HTTPS and cookie scope.** Terminate TLS at the proxy or platform and forward `X-Forwarded-Proto`; `trust proxy` is enabled in production. Keep the client and API on the same registered domain (for example `app.example.com` and `api.example.com`) so the `SameSite=Lax` cookie works. If they must be cross-site, switch the cookie to `SameSite=None; Secure` and add CSRF tokens.
 5. **Provider quota.** Set `ARCGIS_API_KEY` for production traffic, and review Open-Meteo's commercial terms and limits before launch. The free Open-Meteo tier is non-commercial.
 6. **Backups and monitoring.** Enable Atlas continuous backups or scheduled snapshots, test a restore, and configure alerts for connection count, CPU, disk, and slow queries. Send API logs and `/api/health` checks to your monitoring system.
 7. **Scaling.** The in-process rate limits and caches are per API instance. Before running more than one instance, move both to Redis (or another shared store) so limits and cache invalidation are consistent.
-8. **Account lifecycle.** Before public launch, add password reset, account deletion, and a JWT revocation strategy. The current 7-day token cannot be revoked before expiry. Email ownership is already proven by OTP or OAuth, but there is no separate “verify your email” campaign.
+8. **Account lifecycle.** Before public launch, add account deletion and a JWT revocation strategy. Password reset already exists. The current 7-day token cannot be revoked before expiry.
 9. **OAuth and email.** Register the production callbacks (`/api/auth/oauth/google/callback` and `/api/auth/oauth/github/callback`), publish the Google consent screen when leaving Testing mode, and verify a sending domain with Brevo. Brevo's free tier currently allows 300 emails/day; Google and GitHub OAuth have no per-login charge.
 
 ## Weather and place-search integration
@@ -595,7 +603,7 @@ This project's server-side cache and rate limits reduce upstream traffic, but th
 - ArcGIS returns ISO3 country codes, while the suggestion badge uses ISO2. ArcGIS results therefore omit the country badge; the country name is still shown.
 - The keyless ArcGIS endpoint is not intended for production-scale traffic. Set `ARCGIS_API_KEY` and confirm Esri licensing before launch.
 - Country-level results are represented by one center coordinate and are explicitly labeled; they are not countrywide forecasts.
-- The account system has no password reset, account deletion, email-change flow, or “set a password” flow for OTP/OAuth-only accounts.
+- The account system has no account deletion, email-change flow, or “set a password” flow for OAuth-only accounts.
 - Password reset depends on an SMTP provider. Free tiers have daily caps, and reliable delivery to arbitrary recipients needs a verified sending domain. Without SMTP, only development console links work.
 - Google sign-in in Testing mode is limited to added test users until the consent screen is published. GitHub OAuth has no per-login charge but still depends on GitHub availability.
 - JWTs cannot be revoked before expiry. Logout clears the cookie, but a copied token would remain valid until its 7-day expiry.
@@ -610,7 +618,7 @@ This project's server-side cache and rate limits reduce upstream traffic, but th
 
 ## Future work
 
-- Add password reset, email-change, account deletion, a “set password” flow for OTP/OAuth-only accounts, and session/device management.
+- Add password reset (done), email-change, account deletion, a “set password” flow for OAuth-only accounts, and session/device management.
 - Move JWT handling to short-lived access tokens plus rotating refresh tokens in HttpOnly cookies, with server-side revocation.
 - Add integration and component tests for the client, including accessibility checks in CI.
 - Add Redis-backed caching and rate limiting for multi-instance deployments.
