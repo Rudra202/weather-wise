@@ -4,6 +4,7 @@ dist-ssr/
 build/
 coverage/
 .tmp/
+preview/
 *.local
 .env
 .env.*
